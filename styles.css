@@ -1,0 +1,149 @@
+/* variables */
+
+:root {
+    --bg_color: #101018;
+    --highlight: #F8B27A;
+    --contrast: #181824;
+    --container-font-color: #999999 ;
+  }
+
+/* Font */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap');
+html, body, [class*="css"] {
+    font-family: 'Roboto Mono', monospace;
+}
+
+h2 {
+    color: var(--highlight);
+    font-size:  3.5rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+}
+
+h3{
+    color: var(--highlight); 
+    font-weight: 700;
+    font-size: 2.5rem;
+    padding-bottom: 0px;
+}
+
+h3 > div > a, h3 > div > svg {
+    display: none;
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 2em;
+}
+
+
+.highlight{
+    color: var(--highlight);
+}
+
+/* This removes the ability to expand / de-expand the expander and makes it a container like component */
+
+[data-testid="stSidebar"]  .streamlit-expander{
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--bg_color);
+    border-color: var(--bg_color);
+}
+
+[data-testid="stSidebar"] .streamlit-expanderHeader{
+    display: none;
+}
+
+[data-testid="stSidebar"]{
+    max-width: 270px;
+}
+
+.streamlit-expander{
+    background-color: var(--contrast);
+    border-color: var(--contrast);
+    padding-top: 20px;
+}
+
+.streamlit-expanderHeader{
+    display: none !important;
+    color: var(--container-font-color);
+    pointer-events: none;
+}
+
+.streamlit-expanderHeader > svg{
+    display: none;
+}
+
+
+[data-testid="stHorizontalBlock"] [data-testid="column"]{
+    display: flex;
+}   
+
+[data-testid="stHorizontalBlock"] [data-testid="column"] :first-child{
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+}
+
+
+.stMarkdown :first-child{
+    flex-direction: row !important;
+}
+
+
+[data-testid="stCaptionContainer"]{
+    margin-bottom: -25px;
+    padding-bottom: 0px;
+}
+
+/* Buttons */
+
+.stButton > button {
+
+}
+
+.stButton > button:hover {
+
+}
+
+.stDownloadButton > button{
+
+}
+
+.stDownloadButton > button:hover{
+
+}
+/* Form */
+
+[data-testid="stForm"] {
+    border: 0;
+}
+
+
+/* Text area */
+
+[data-baseweb="textarea"]{
+    border-radius: 20px;
+}
+
+
+/* Selectbox */
+
+/* Selectbox Label */
+/* 
+.stSelectbox > label > [data-testid="stMarkdownContainer"] > p {
+    font-size: 300px;
+} */
+
+/* Selectbox container */
+
+.stSelectbox [data-baseweb="select"] > div {
+    background-color: var(--contrast);
+}
+
+@media screen and (max-width: 1440px) {
+    body {
+      zoom: 80%;
+    }
+  }
