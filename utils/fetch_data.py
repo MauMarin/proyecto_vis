@@ -3,7 +3,7 @@ import pandas as pd
 class Utils:
 
     def __init__(self) -> None:
-        path = '../data/final_datasets'
+        path = 'data/final_datasets'
         
         self.gdp = pd.read_csv(f"{path}/gdp.csv")
         self.gdp_growth = pd.read_csv(f"{path}/gdp_growth.csv")
