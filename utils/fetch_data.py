@@ -30,7 +30,15 @@ class Utils:
         elif val == 'gdp_ppp_per_capita':
             temp = self.gdp_ppp_per_capita
         
-        return temp[ temp['Year'] == year ]
+        temp = temp[ temp['Year'] == year ]
+
+        temp_dic = {
+            'dataframe': temp,
+            'max': temp['value'].max(),
+            'min': temp['value'].min()
+        }
+        
+        return temp_dic
     
     def get_gdp_by_country(self, val, country):
         temp = ''
@@ -48,7 +56,9 @@ class Utils:
         elif val == 'gdp_ppp_per_capita':
             temp = self.gdp_ppp_per_capita
         
-        return temp[ temp['Country Name'] == country ]
+        temp = temp[ temp['Country Name'] == country ]
+        
+        return temp
     
     def get_unemployment_by_year(self, year):
         return self.unemployment[ self.unemployment['Year'] == year ]
@@ -62,11 +72,7 @@ class Utils:
     def get_happiness_by_country(self, country):
         return self.happiness[ self.happiness['Country name'] == country ]
     
-
 utils = Utils()
-# print(utils.get_gdp_by_year('gdp_per_capita', 2015))
-# print(utils.get_gdp_by_country('gdp_per_capita', 'Costa Rica'))
-# print(utils.get_unemployment_by_country('Costa Rica'))
-# print(utils.get_unemployment_by_year(2015))
-# print(utils.get_happiness_by_country('Costa Rica'))
-print(utils.get_happiness_by_year(2015))
+
+utils.get_gdp_by_year('gdp', 2015)
+utils.get_gdp_by_country('gdp', 'Costa Rica')
