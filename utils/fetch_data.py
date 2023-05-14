@@ -73,6 +73,3 @@ class Utils:
         return self.happiness[ self.happiness['Country name'] == country ]
     
 utils = Utils()
-
-utils.get_gdp_by_year('gdp', 2015)
-utils.get_gdp_by_country('gdp', 'Costa Rica')
