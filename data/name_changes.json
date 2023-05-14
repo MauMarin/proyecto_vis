@@ -1,0 +1,51 @@
+{
+    "others": {
+        "old": [
+            "\"Hong Kong SAR, China\"",
+            "\"Venezuela, RB\"",
+            "\"Yemen, Rep.\"",
+            "\"Iran, Islamic Rep.\"",
+            "Czech Republic",
+            "\"Egypt, Arab Rep.\"",
+            "\"Gambia, The\"",
+            "Lao PDR",
+            "\"Korea, Rep.\"",
+            "Kyrgyz Republic",
+            "\"Yemen, Rep.\"", 
+            "Syrian Arab Republic", 
+            "\"Congo, Rep.\"", 
+            "\"Congo, Dem. Rep.\""
+        ],
+        "new":[
+            "Hong Kong S.A.R. of China", 
+            "Venezuela", 
+            "Yemen", 
+            "Iran", 
+            "Czechia", 
+            "Egypt", 
+            "Gambia", 
+            "Laos", 
+            "South Korea", 
+            "Kyrgyzstan", 
+            "Yemen", 
+            "Syria", 
+            "Congo (Brazzaville)", 
+            "Congo (Kinshasa)"
+        ]
+    },
+    
+    "happiness":{
+        "old": [
+            "Somaliland region",
+            "Czechia",
+            "Ivory Coast",
+            "Russia"
+        ],
+        "new": [
+            "Somalia",
+            "Czech Republic",
+            "Cote d'Ivoire",
+            "Russian Federation"
+        ]
+    }
+}

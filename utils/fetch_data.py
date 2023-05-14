@@ -14,6 +14,11 @@ class Utils:
         self.unemployment = pd.read_csv(f"{path}/unemployment analysis.csv")
         self.happiness = pd.read_csv(f"{path}/Happiness_data.csv")
 
+        a = set(list(self.gdp['Country Name']))
+        b = set(list(self.happiness['Country name']))
+        c = list(b - a)
+        [print(x) for x in c]
+
     def get_gdp_by_year(self, val, year):
         temp = ''
 
