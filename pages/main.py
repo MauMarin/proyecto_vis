@@ -48,4 +48,4 @@ with st.sidebar:
 tab1, tab2 = st.tabs(["Map1", "Map2"])
 
 with tab1:
-   st.plotly_chart(fig)
+   st.plotly_chart(fig, use_container_width=True)
