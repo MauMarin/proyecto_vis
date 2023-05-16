@@ -22,6 +22,7 @@ st.set_page_config(
     layout = 'wide'
 )
 global_year=2020
+global_country=""
 
 def apply_filter_gdp(metric, year):
     df = utility.get_gdp_by_year(metric, year)
@@ -77,11 +78,18 @@ with open('styles.css') as f:
 with st.sidebar:
     global_year = st.slider('Year', 1960, 2020, 2010)
 
+    df = utility.get_gdp_by_year("gdp_per_capita", global_year)
+    df = df["dataframe"]
+    global_country = st.selectbox(
+    'Country',
+    df["Country Name"]
+    )
+
 tab1, tab2, tab3 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos de país"])
 
 with tab1:
 	with st.container():
-		fig = apply_filter("gdp_per_capita",global_year)
+		fig = apply_filter_gdp("gdp_per_capita",global_year)
 		st.plotly_chart(fig, use_container_width=True)
 
 with tab2:
@@ -93,10 +101,9 @@ with tab3:
 		col1, col2, col3 = st.columns(3)
 
 		charts = []
-		country = 'Costa Rica'
 
 		for i in values:
-			t = utility.get_gdp_by_country(i, country)
+			t = utility.get_gdp_by_country(i, global_country)
 			chart = px.scatter(t['df'], x = 'Year', y = 'value', title=i, labels=['year', i])
 			charts.append(chart)
 
