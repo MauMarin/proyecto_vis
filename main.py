@@ -21,10 +21,9 @@ st.set_page_config(
 )
 global_year=2020
 
-def apply_filter(metric, year):
+def apply_filter_gdp(metric, year):
     df = utility.get_gdp_by_year(metric, year)
     df2 = df["dataframe"]
-    print(df['min'], df['max'])
     geo_df_tmp = gpd.GeoDataFrame.from_features(
         geodata["features"]
     ).rename(columns={"ISO_A3":"Code"})
@@ -43,6 +42,28 @@ def apply_filter(metric, year):
                                height=1100)
     return fig
 
+def apply_filter_unemp(year):
+    df = utility.get_unemployment_by_year(year)
+    #df["case"] = df["case"].astype(str)
+    geo_df_tmp = gpd.GeoDataFrame.from_features(
+        geodata["features"]
+    ).rename(columns={"ISO_A3":"Code"})
+
+    geo_df = geo_df_tmp.merge(df, how="inner").set_index("Code")
+
+    fig = px.choropleth_mapbox(geo_df,
+                               geojson=geo_df.geometry,
+                               locations=geo_df.index,
+                               color='case',
+                               color_continuous_scale=["blue", "green",
+                                         "yellow", "red"],
+                               center={"lat": 0, "lon": 0},
+                               mapbox_style="carto-positron",
+                               zoom=1,
+                               range_color=[1, 4],
+                               height=1100)
+    return fig
+
 #load custom css
 with open('styles.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html = True)
@@ -54,5 +75,9 @@ with st.sidebar:
 tab1, tab2 = st.tabs(["PIB per capita", "Casos de crecimiento"])
 
 with tab1:
-   fig = apply_filter("gdp_per_capita",global_year)
+   fig = apply_filter_gdp("gdp_per_capita",global_year)
    st.plotly_chart(fig, use_container_width=True)
+
+with tab2:
+    fig = apply_filter_unemp(global_year)
+    st.plotly_chart(fig, use_container_width=True)
