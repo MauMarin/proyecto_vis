@@ -4,6 +4,7 @@ import plotly.express as px
 import geopandas as gpd
 import json
 import utils.fetch_data as utils
+import pandas as pd
   
 # Opening JSON file
 f = open('data/countries.geojson')
@@ -61,8 +62,7 @@ def apply_filter_unemp(year):
                                geojson=geo_df.geometry,
                                locations=geo_df.index,
                                color='case',
-                               color_continuous_scale=["blue", "green",
-                                         "yellow", "red"],
+                               color_continuous_scale='mint_r',
                                center={"lat": 0, "lon": 0},
                                mapbox_style="carto-positron",
                                zoom=1,
@@ -81,8 +81,19 @@ tab1, tab2, tab3 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos
 
 with tab1:
 	with st.container():
-		fig = apply_filter("gdp_per_capita",global_year)
+		fig = apply_filter_gdp("gdp_per_capita",global_year)
 		st.plotly_chart(fig, use_container_width=True)
+	
+	with st.container():
+		col1, col2, col3 = st.columns(3)
+
+		for i in values:
+			t1 = utility.get_gdp_by_year(i, global_year)['dataframe']
+			t2 = utility.get_unemployment_by_year(global_year).rename(columns={'value': 'value_unemp'})
+			new_df = pd.merge(t1, t2, on='Country Name', how='inner')
+			chart = px.scatter(new_df, x = 'value_unemp', y = 'value', title=f'{i} vs Unemployment')
+			st.plotly_chart(chart, use_container_width=True)
+
 
 with tab2:
     fig = apply_filter_unemp(global_year)
