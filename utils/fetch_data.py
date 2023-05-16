@@ -14,13 +14,6 @@ class Utils:
         self.unemployment = pd.read_csv(f"{path}/unemployment analysis.csv")
         self.happiness = pd.read_csv(f"{path}/Happiness_data.csv")
 
-        # a = set(list(self.gdp['Country Name']))
-        # b = set(list(self.happiness['Country name']))
-        # c = list(a - b)
-        # [print(x) for x in c]
-
-        # print(self.gdp_growth[ self.gdp_growth['Country Name'] == "Venezuela, RB" ])
-
     def get_gdp_by_year(self, val, year):
         temp = ''
 

@@ -3,7 +3,7 @@ from streamlit_extras.no_default_selectbox import selectbox
 import plotly.express as px
 import geopandas as gpd
 import json
-import utils.fetch_data
+import utils.fetch_data as utils
   
 # Opening JSON file
 f = open('data/countries.geojson')
@@ -12,7 +12,7 @@ f = open('data/countries.geojson')
 # a dictionary
 geodata = json.load(f)
 
-utility = utils.fetch_data.Utils()
+utility = utils.Utils()
 
 st.set_page_config(
     page_title = 'GDP/Employment Dashboard',
@@ -38,7 +38,7 @@ def apply_filter(metric, year):
                                color_continuous_scale="haline",
                                center={"lat": 0, "lon": 0},
                                mapbox_style="carto-positron",
-                               zoom=1,
+                               zoom=1.2,
                                range_color=[df['min'], df['max']], #
                                height=1100)
     return fig
@@ -49,7 +49,7 @@ with open('styles.css') as f:
 
 with st.sidebar:
 
-    global_year = st.slider('Year', 1960, 2021, 2020)
+    global_year = st.slider('Year', 1960, 2021, 2010)
 
 tab1, tab2 = st.tabs(["PIB per capita", "Casos de crecimiento"])
 
