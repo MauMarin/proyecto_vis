@@ -14,12 +14,12 @@ class Utils:
         self.unemployment = pd.read_csv(f"{path}/unemployment analysis.csv")
         self.happiness = pd.read_csv(f"{path}/Happiness_data.csv")
 
-        a = set(list(self.gdp['Country Name']))
-        b = set(list(self.happiness['Country name']))
-        c = list(a - b)
-        [print(x) for x in c]
+        # a = set(list(self.gdp['Country Name']))
+        # b = set(list(self.happiness['Country name']))
+        # c = list(a - b)
+        # [print(x) for x in c]
 
-        print(self.gdp_growth[ self.gdp_growth['Country Name'] == "Venezuela, RB" ])
+        # print(self.gdp_growth[ self.gdp_growth['Country Name'] == "Venezuela, RB" ])
 
     def get_gdp_by_year(self, val, year):
         temp = ''
@@ -39,9 +39,16 @@ class Utils:
         
         temp = temp[ temp['Year'] == year ]
 
+        # print(temp['value'].mean())
+
+        q1 = temp['value'].quantile(0.25)
+        q3 = temp['value'].quantile(0.87)
+        iqr = q3-q1
+        outliers = temp[((temp['value']<(q3+1.5*iqr)))]
+
         temp_dic = {
             'dataframe': temp,
-            'max': temp['value'].max(),
+            'max': outliers['value'].max(),
             'min': temp['value'].min()
         }
         
@@ -79,4 +86,4 @@ class Utils:
     def get_happiness_by_country(self, country):
         return self.happiness[ self.happiness['Country name'] == country ]
     
-utils = Utils()
+# utils = Utils()

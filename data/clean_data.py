@@ -16,8 +16,6 @@ def get_countries():
             'iso3': i['iso3']
         }
     
-    # print(list(country_dict.keys()))
-    
     return country_dict
 
 
