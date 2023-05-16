@@ -2,7 +2,23 @@ import pandas as pd
 from os import listdir
 from os.path import isfile, join
 import json
+import requests
 
+
+def get_countries():
+    url = 'https://countriesnow.space/api/v0.1/countries'
+    response = requests.request('GET', url).json()['data']
+    country_dict = {}
+
+    for i in response: 
+        country_dict[i['country']] = {
+            'iso2': i['iso2'],
+            'iso3': i['iso3']
+        }
+    
+    # print(list(country_dict.keys()))
+    
+    return country_dict
 
 
 def transform_datasets():
@@ -24,6 +40,8 @@ def transform_datasets():
 
         df['Country Name'] = df['Country Name'].replace(old, new)
 
+        df = df[df['Country Name'].isin(list(countries))]
+
         df.to_csv(f'final_datasets/{file}', index=0)
 
 
@@ -35,7 +53,11 @@ def rename_happiness():
     df = pd.read_csv(f"{path}/{file}")
     df['Country name'] = df['Country name'].replace(changes['old'], changes['new'])
 
+    df = df[df['Country name'].isin(list(countries))]
+
     df.to_csv(f'final_datasets/{file}', index=0)
 
+
+countries = get_countries()
 transform_datasets()
 rename_happiness()

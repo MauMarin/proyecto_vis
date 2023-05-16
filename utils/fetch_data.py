@@ -5,7 +5,7 @@ class Utils:
     def __init__(self) -> None:
         path = 'data/final_datasets'
         
-        self.gdp = pd.read_csv(f"{path}/gdp.csv")
+        self.gdp = pd.read_csv(f"{path}/gdp.csv", quotechar='"')
         self.gdp_growth = pd.read_csv(f"{path}/gdp_growth.csv")
         self.gdp_per_capita_growth = pd.read_csv(f"{path}/gdp_per_capita_growth.csv")
         self.gdp_per_capita = pd.read_csv(f"{path}/gdp_per_capita.csv")
@@ -16,8 +16,10 @@ class Utils:
 
         a = set(list(self.gdp['Country Name']))
         b = set(list(self.happiness['Country name']))
-        c = list(b - a)
+        c = list(a - b)
         [print(x) for x in c]
+
+        print(self.gdp_growth[ self.gdp_growth['Country Name'] == "Venezuela, RB" ])
 
     def get_gdp_by_year(self, val, year):
         temp = ''
