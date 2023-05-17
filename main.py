@@ -51,7 +51,7 @@ def apply_filter_unemp(year):
         geojson=geo_df.geometry,
         locations=geo_df.index,
         color='case',
-        color_continuous_scale=['blue', 'green', 'yellow', 'red'],
+        color_continuous_scale=["blue", "green", "yellow", "red"],
         center={"lat": 0, "lon": 0},
         mapbox_style="carto-positron",
         zoom=1,
