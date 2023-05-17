@@ -5,25 +5,14 @@ import geopandas as gpd
 import json
 import utils.fetch_data as utils
 import pandas as pd
-  
-# Opening JSON file
-f = open('data/countries.geojson')
-  
-# returns JSON object as 
-# a dictionary
-geodata = json.load(f)
 
+
+# Global Variables
+values = ['gdp','gdp_growth','gdp_per_capita_growth','gdp_per_capita','gdp_ppp','gdp_ppp_per_capita']
+f = open('data/countries.geojson')
+geodata = json.load(f)
 utility = utils.Utils()
 
-values = ['gdp','gdp_growth','gdp_per_capita_growth','gdp_per_capita','gdp_ppp','gdp_ppp_per_capita']
-
-st.set_page_config(
-    page_title = 'GDP/Employment Dashboard',
-    page_icon = '📈',
-    layout = 'wide'
-)
-global_year=2020
-global_country=""
 
 def apply_filter_gdp(metric, year):
     df = utility.get_gdp_by_year(metric, year)
@@ -52,7 +41,6 @@ def apply_filter_gdp(metric, year):
 
 def apply_filter_unemp(year):
     df = utility.get_unemployment_by_year(year)
-    #df["case"] = df["case"].astype(str)
     geo_df_tmp = gpd.GeoDataFrame.from_features(
         geodata["features"]
     ).rename(columns={"ISO_A3":"Code"})
@@ -60,71 +48,84 @@ def apply_filter_unemp(year):
     geo_df = geo_df_tmp.merge(df, how="inner").set_index("Code")
 
     fig = px.choropleth_mapbox(geo_df,
-                               geojson=geo_df.geometry,
-                               locations=geo_df.index,
-                               color='case',
-                               color_continuous_scale='mint_r',
-                               center={"lat": 0, "lon": 0},
-                               mapbox_style="carto-positron",
-                               zoom=1,
-                               range_color=[1, 4],
-                               height=1100)
+        geojson=geo_df.geometry,
+        locations=geo_df.index,
+        color='case',
+        color_continuous_scale='mint_r',
+        center={"lat": 0, "lon": 0},
+        mapbox_style="carto-positron",
+        zoom=1,
+        range_color=[1, 4],
+        height=1100
+	)
     return fig
 
-#load custom css
-with open('styles.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html = True)
+def main():
 
-with st.sidebar:
-    global_year = st.slider('Year', 1960, 2020, 2010)
+    global_year=2020
+    global_country=""
 
-    df = utility.get_gdp_by_year("gdp_per_capita", global_year)
-    df = df["dataframe"]
-    global_country = st.selectbox(
-    'Country',
-    df["Country Name"]
-    )
+    #load custom css
+    with open('styles.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html = True)
 
-tab1, tab2, tab3 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos de país"])
+    with st.sidebar:
+        global_year = st.slider('Year', 1960, 2020, 2010)
 
-with tab1:
-	with st.container():
-		fig = apply_filter_gdp("gdp_per_capita",global_year)
-		st.plotly_chart(fig, use_container_width=True)
-	
-	with st.container():
-		col1, col2, col3 = st.columns(3)
+        df = utility.get_gdp_by_year("gdp_per_capita", global_year)
+        df = df["dataframe"]
+        global_country = st.selectbox(
+        'Country',
+        df["Country Name"]
+        )
 
-		for i in values:
-			t1 = utility.get_gdp_by_year(i, global_year)['dataframe']
-			t2 = utility.get_unemployment_by_year(global_year).rename(columns={'value': 'value_unemp'})
-			new_df = pd.merge(t1, t2, on='Country Name', how='inner')
-			chart = px.scatter(new_df, x = 'value_unemp', y = 'value', title=f'{i} vs Unemployment')
-			st.plotly_chart(chart, use_container_width=True)
+    tab1, tab2, tab3 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos de país"])
+
+    with tab1:
+        with st.container():
+            fig = apply_filter_gdp("gdp_per_capita",global_year)
+            st.plotly_chart(fig, use_container_width=True)
+        
+        with st.container():
+            col1, col2, col3 = st.columns(3)
+
+            for i in values:
+                t1 = utility.get_gdp_by_year(i, global_year)['dataframe']
+                t2 = utility.get_unemployment_by_year(global_year).rename(columns={'value': 'value_unemp'})
+                new_df = pd.merge(t1, t2, on='Country Name', how='inner')
+                chart = px.scatter(new_df, x = 'value_unemp', y = 'value', title=f'{i} vs Unemployment')
+                st.plotly_chart(chart, use_container_width=True)
+
+    with tab2:
+        fig = apply_filter_unemp(global_year)
+        st.plotly_chart(fig, use_container_width=True)
+
+    with tab3:
+        with st.container():
+            col1, col2, col3 = st.columns(3)
+
+            charts = []
+
+            for i in values:
+                t = utility.get_gdp_by_country(i, global_country)
+                chart = px.scatter(t['df'], x = 'Year', y = 'value', title=i, labels=['year', i])
+                charts.append(chart)
 
 
-with tab2:
-    fig = apply_filter_unemp(global_year)
-    st.plotly_chart(fig, use_container_width=True)
+            with col1:
+                st.plotly_chart(charts[0], use_container_width=True)
+                st.plotly_chart(charts[3], use_container_width=True)
+            with col2:
+                st.plotly_chart(charts[1], use_container_width=True)
+                st.plotly_chart(charts[4], use_container_width=True)
+            with col3:
+                st.plotly_chart(charts[2], use_container_width=True)
+                st.plotly_chart(charts[5], use_container_width=True)
 
-with tab3:
-	with st.container():
-		col1, col2, col3 = st.columns(3)
+st.set_page_config(
+    page_title = 'GDP/Employment Dashboard',
+    page_icon = '📈',
+    layout = 'wide'
+)
 
-		charts = []
-
-		for i in values:
-			t = utility.get_gdp_by_country(i, global_country)
-			chart = px.scatter(t['df'], x = 'Year', y = 'value', title=i, labels=['year', i])
-			charts.append(chart)
-
-
-		with col1:
-			st.plotly_chart(charts[0], use_container_width=True)
-			st.plotly_chart(charts[3], use_container_width=True)
-		with col2:
-			st.plotly_chart(charts[1], use_container_width=True)
-			st.plotly_chart(charts[4], use_container_width=True)
-		with col3:
-			st.plotly_chart(charts[2], use_container_width=True)
-			st.plotly_chart(charts[5], use_container_width=True)
+main()
