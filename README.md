@@ -1,5 +1,5 @@
 # proyecto_vis
 Proyecto final
 
-## Use instructions
-streamlit run pages/main.py
+## Para ejecutar
+streamlit run main.py

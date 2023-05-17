@@ -51,7 +51,7 @@ def apply_filter_unemp(year):
         geojson=geo_df.geometry,
         locations=geo_df.index,
         color='case',
-        color_continuous_scale='mint_r',
+        color_continuous_scale=['blue', 'green', 'yellow', 'red'],
         center={"lat": 0, "lon": 0},
         mapbox_style="carto-positron",
         zoom=1,
@@ -108,7 +108,7 @@ def main():
 
             for i in values:
                 t = utility.get_gdp_by_country(i, global_country)
-                chart = px.scatter(t['df'], x = 'Year', y = 'value', title=i, labels=['year', i])
+                chart = px.line(t['df'], x = 'Year', y = 'value', title=i, labels=['year', i])
                 charts.append(chart)
 
 
@@ -121,6 +121,10 @@ def main():
             with col3:
                 st.plotly_chart(charts[2], use_container_width=True)
                 st.plotly_chart(charts[5], use_container_width=True)
+
+        temp_unemp = utility.get_unemployment_by_country(global_country)
+        chart = px.line(temp_unemp, x = 'Year', y = 'value', title='Unemployment', labels=['year', i])
+        st.plotly_chart(chart, use_container_width=True)
 
 st.set_page_config(
     page_title = 'GDP/Employment Dashboard',
