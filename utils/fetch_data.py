@@ -5,27 +5,32 @@ class Utils:
     path = 'data/final_datasets'
 
     def __init__(self) -> None:
-        pass
+        self.gdp                    = pd.read_csv(f"{self.path}/gdp.csv")  
+        self.gdp_growth             = pd.read_csv(f"{self.path}/gdp_growth.csv")
+        self.gdp_per_capita_growth  = pd.read_csv(f"{self.path}/gdp_per_capita_growth.csv")
+        self.gdp_per_capita         = pd.read_csv(f"{self.path}/gdp_per_capita.csv")
+        self.gdp_ppp                = pd.read_csv(f"{self.path}/gdp_ppp.csv")
+        self.gdp_ppp_per_capita     = pd.read_csv(f"{self.path}/gdp_ppp_per_capita.csv")
+        self.unemployment           = pd.read_csv(f"{self.path}/unemployment analysis.csv")
+        self.happiness              = pd.read_csv(f"{self.path}/Happiness_data.csv")
 
     def get_gdp_by_year(self, val, year):
         temp = ''
 
         if val == 'gdp':
-            temp = pd.read_csv(f"{self.path}/gdp.csv", quotechar='"')  
+            temp = self.gdp
         elif val == 'gdp_growth':
-            temp = pd.read_csv(f"{self.path}/gdp_growth.csv")
+            temp = self.gdp_growth
         elif val == 'gdp_per_capita_growth':
-            temp = pd.read_csv(f"{self.path}/gdp_per_capita_growth.csv")
+            temp = self.gdp_per_capita_growth
         elif val == 'gdp_per_capita':
-            temp = pd.read_csv(f"{self.path}/gdp_per_capita.csv")
+            temp = self.gdp_per_capita
         elif val == 'gdp_ppp':
-            temp = pd.read_csv(f"{self.path}/gdp_ppp.csv")
+            temp = self.gdp_ppp
         elif val == 'gdp_ppp_per_capita':
-            temp = pd.read_csv(f"{self.path}/gdp_ppp_per_capita.csv")
+            temp = self.gdp_ppp_per_capita
         
         temp = temp[ temp['Year'] == year ]
-
-        # print(temp['value'].mean())
 
         q1 = temp['value'].quantile(0.25)
         q3 = temp['value'].quantile(0.87)
@@ -44,17 +49,17 @@ class Utils:
         temp = ''
 
         if val == 'gdp':
-            temp = pd.read_csv(f"{self.path}/gdp.csv", quotechar='"')  
+            temp = self.gdp
         elif val == 'gdp_growth':
-            temp = pd.read_csv(f"{self.path}/gdp_growth.csv")
+            temp = self.gdp_growth
         elif val == 'gdp_per_capita_growth':
-            temp = pd.read_csv(f"{self.path}/gdp_per_capita_growth.csv")
+            temp = self.gdp_per_capita_growth
         elif val == 'gdp_per_capita':
-            temp = pd.read_csv(f"{self.path}/gdp_per_capita.csv")
+            temp = self.gdp_per_capita
         elif val == 'gdp_ppp':
-            temp = pd.read_csv(f"{self.path}/gdp_ppp.csv")
+            temp = self.gdp_ppp
         elif val == 'gdp_ppp_per_capita':
-            temp = pd.read_csv(f"{self.path}/gdp_ppp_per_capita.csv")
+            temp = self.gdp_ppp_per_capita
         
         temp = temp[ temp['Country Name'] == country ]
 
@@ -67,19 +72,15 @@ class Utils:
         return ret_dict
     
     def get_unemployment_by_year(self, year):
-        temp = pd.read_csv(f"{self.path}/unemployment analysis.csv")
-        return temp[ temp['Year'] == year ]
+        return self.unemployment[ self.unemployment['Year'] == year ]
     
     def get_unemployment_by_country(self, country):
-        temp = pd.read_csv(f"{self.path}/unemployment analysis.csv")
-        return temp[ temp['Country Name'] == country ]
+        return self.unemployment[ self.unemployment['Country Name'] == country ]
     
     def get_happiness_by_year(self, year):
-        temp = pd.read_csv(f"{self.path}/Happiness_data.csv")
-        return temp[ temp['year'] == year ]
+        return self.happiness[ self.happiness['year'] == year ]
     
     def get_happiness_by_country(self, country):
-        temp = pd.read_csv(f"{self.path}/Happiness_data.csv")
-        return temp[ temp['Country name'] == country ]
+        return self.happiness[ self.happiness['Country name'] == country ]
     
 # utils = Utils()

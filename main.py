@@ -1,6 +1,8 @@
 import streamlit as st
 from streamlit_extras.no_default_selectbox import selectbox
 import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import geopandas as gpd
 import json
 import utils.fetch_data as utils
@@ -9,9 +11,14 @@ import pandas as pd
 
 # Global Variables
 values = ['gdp','gdp_growth','gdp_per_capita_growth','gdp_per_capita','gdp_ppp','gdp_ppp_per_capita']
-f = open('data/countries.geojson')
-geodata = json.load(f)
-utility = utils.Utils()
+
+
+@st.cache_data
+def load_data():
+    f = open('data/countries.geojson')
+    geodata = json.load(f)
+    utility = utils.Utils()
+    return (geodata, utility)
 
 
 def apply_filter_gdp(metric, year):
@@ -70,16 +77,16 @@ def main():
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html = True)
 
     with st.sidebar:
-        global_year = st.slider('Year', 1960, 2020, 2010)
+        global_year = st.slider('Year', 1990, 2020, 2000)
 
         df = utility.get_gdp_by_year("gdp_per_capita", global_year)
         df = df["dataframe"]
         global_country = st.selectbox(
-        'Country',
-        df["Country Name"]
+            'Country',
+            df["Country Name"]
         )
 
-    tab1, tab2, tab3 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos de país"])
+    tab1, tab2, tab3, tab4 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos de país", "Cube"])
 
     with tab1:
         with st.container():
@@ -100,31 +107,115 @@ def main():
         fig = apply_filter_unemp(global_year)
         st.plotly_chart(fig, use_container_width=True)
 
+
     with tab3:
-        with st.container():
-            col1, col2, col3 = st.columns(3)
-
-            charts = []
-
-            for i in values:
-                t = utility.get_gdp_by_country(i, global_country)
-                chart = px.line(t['df'], x = 'Year', y = 'value', title=i, labels=['year', i])
-                charts.append(chart)
-
-
-            with col1:
-                st.plotly_chart(charts[0], use_container_width=True)
-                st.plotly_chart(charts[3], use_container_width=True)
-            with col2:
-                st.plotly_chart(charts[1], use_container_width=True)
-                st.plotly_chart(charts[4], use_container_width=True)
-            with col3:
-                st.plotly_chart(charts[2], use_container_width=True)
-                st.plotly_chart(charts[5], use_container_width=True)
-
         temp_unemp = utility.get_unemployment_by_country(global_country)
-        chart = px.line(temp_unemp, x = 'Year', y = 'value', title='Unemployment', labels=['year', i])
+        chart = px.line(
+            temp_unemp, 
+            x = 'Year', 
+            y = 'value',
+            title=f'{global_country}\'s Unemployment Throughout the Years',
+            labels={"value": "Unemployment", "Year": "Year"}
+        )
+
         st.plotly_chart(chart, use_container_width=True)
+
+
+        curr_index = st.selectbox(
+            'Economic Index',
+            [
+                'Gdp', 
+                'Gdp Growth', 
+                'Gdp Per Capita Growth', 
+                'Gdp Per Capita', 
+                'Gdp Ppp', 
+                'Gdp Ppp Per Capita'
+            ]
+        )
+
+        econ = utility.get_gdp_by_country(curr_index.lower().replace(' ', '_'), global_country)
+        
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+        # Add traces
+        fig.add_trace(
+            go.Scatter(
+                x=temp_unemp['Year'], 
+                y=temp_unemp['value'], 
+                name="Unemployment", 
+                mode='lines'
+            ),
+            secondary_y=True,
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=econ['df']['Year'], 
+                y=econ['df']['value'], 
+                name=curr_index, 
+                mode='lines'
+            ),
+            secondary_y=False,
+        )
+
+        # Add figure title
+        fig.update_layout(
+            title_text=f"Unemployment vs {curr_index}"
+        )
+        fig.update_xaxes(title_text="Year")
+
+        # Set y-axes titles
+        fig.update_yaxes(title_text="<b>primary</b> yaxis title", secondary_y=False)
+        fig.update_yaxes(title_text="<b>secondary</b> yaxis title", secondary_y=True)
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    
+    with tab4:
+        curr_index = st.selectbox(
+            'Economic Index',
+            [
+                'Gdp', 
+                'Gdp Growth', 
+                'Gdp Per Capita Growth', 
+                'Gdp Per Capita', 
+                'Gdp Ppp', 
+                'Gdp Ppp Per Capita'
+            ],
+            key=42069
+        )
+
+        curr_hap = st.selectbox(
+            'Happiness Factor',
+            [
+                'Life Ladder',
+                'Log GDP per capita',
+                'Social support',
+                'Healthy life expectancy at birth',
+                'Freedom to make life choices',
+                'Generosity',
+                'Perceptions of corruption',
+                'Positive affect',
+                'Negative affect',
+                'Confidence in national government'
+            ]
+        )
+
+        df1 = utility.get_unemployment_by_year(global_year)
+        df2 = utility.get_happiness_by_year(global_year)
+        df3 = utility.get_gdp_by_year(curr_index.lower().replace(' ', '_'), global_year)['dataframe']
+
+        temp = pd.merge(df1, df3, how='inner', on=['value'])
+        print(temp) 
+
+
+        # fig = px.scatter_3d(df, x=df1['value'], y=df3['dataframe']['value'], z=df2[curr_hap],
+        #             color='species')
+        
+        # st.plotly_chart(fig, use_container_width=True)
+
+
+
 
 st.set_page_config(
     page_title = 'GDP/Employment Dashboard',
@@ -132,4 +223,5 @@ st.set_page_config(
     layout = 'wide'
 )
 
+geodata, utility = load_data()
 main()
