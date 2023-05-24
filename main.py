@@ -86,7 +86,7 @@ def main():
             df["Country Name"]
         )
 
-    tab1, tab2, tab3, tab4 = st.tabs(["PIB per capita", "Casos de crecimiento", "Ver datos de país", "Cube"])
+    tab1, tab2, tab3, tab4 = st.tabs(["GDP per Capita", "Growth Cases", "Data per Country", "Multivariable Comparison"])
 
     with tab1:
         with st.container():
@@ -201,18 +201,18 @@ def main():
             ]
         )
 
+        global_year = 2014
+
         df1 = utility.get_unemployment_by_year(global_year)
-        df2 = utility.get_happiness_by_year(global_year)
+        df2 = utility.get_happiness_by_year(global_year).rename(columns={'Country name': 'Country Name'})
         df3 = utility.get_gdp_by_year(curr_index.lower().replace(' ', '_'), global_year)['dataframe']
 
-        temp = pd.merge(df1, df3, how='inner', on=['value'])
-        print(temp) 
+        temp_df = pd.merge(df1, df3, on='Country Name', how='inner')
+        temp_df = pd.merge(temp_df, df2, on='Country Name', how='inner')
 
 
-        # fig = px.scatter_3d(df, x=df1['value'], y=df3['dataframe']['value'], z=df2[curr_hap],
-        #             color='species')
-        
-        # st.plotly_chart(fig, use_container_width=True)
+        fig = px.scatter_3d(temp_df, x='value_x', y='value_y', z=curr_hap, color='value_x', labels={'value_y': curr_index, "value_x": "Unemployment"})
+        st.plotly_chart(fig, use_container_width=True)
 
 
 
