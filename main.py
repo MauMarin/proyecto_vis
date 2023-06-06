@@ -63,7 +63,7 @@ def apply_filter_unemp(year):
         mapbox_style="carto-positron",
         zoom=1,
         range_color=[1, 4],
-        height=1100
+        height=900
 	)
     return fig
 
@@ -104,6 +104,14 @@ def main():
                 st.plotly_chart(chart, use_container_width=True)
 
     with tab2:
+        st.info('''
+          Information about yearly growth cases from best to worst:  
+          Case 1: GDP increases and Unemployment decreases (blue)  
+          Case 2: GDP decreases and Unemployment decreases (green)  
+          Case 3: GDP increases and Unemployment increases (yellow)  
+          Case 4: GDP decreases and Unemployment increases (red)
+        ''', icon="ℹ️")
+
         fig = apply_filter_unemp(global_year)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -211,7 +219,7 @@ def main():
         temp_df = pd.merge(temp_df, df2, on='Country Name', how='inner')
 
 
-        fig = px.scatter_3d(temp_df, x='value_x', y='value_y', z=curr_hap, color='value_x', hover_data=['Country Name'], labels={'value_y': curr_index, "value_x": "Unemployment"})
+        fig = px.scatter_3d(temp_df, x='value_x', y='value_y', z=curr_hap, color='value_x', hover_data=['Country Name'], labels={'value_y': curr_index, "value_x": "Unemployment"}, height=900)
         st.plotly_chart(fig, use_container_width=True)
 
 
