@@ -100,7 +100,7 @@ def main():
                 t1 = utility.get_gdp_by_year(i, global_year)['dataframe']
                 t2 = utility.get_unemployment_by_year(global_year).rename(columns={'value': 'value_unemp'})
                 new_df = pd.merge(t1, t2, on='Country Name', how='inner')
-                chart = px.scatter(new_df, x = 'value_unemp', y = 'value', title=f'{i} vs Unemployment')
+                chart = px.scatter(new_df, x = 'value_unemp', y = 'value', hover_data=['Country Name'], title=f'{i} vs Unemployment')
                 st.plotly_chart(chart, use_container_width=True)
 
     with tab2:
@@ -211,7 +211,7 @@ def main():
         temp_df = pd.merge(temp_df, df2, on='Country Name', how='inner')
 
 
-        fig = px.scatter_3d(temp_df, x='value_x', y='value_y', z=curr_hap, color='value_x', labels={'value_y': curr_index, "value_x": "Unemployment"})
+        fig = px.scatter_3d(temp_df, x='value_x', y='value_y', z=curr_hap, color='value_x', hover_data=['Country Name'], labels={'value_y': curr_index, "value_x": "Unemployment"})
         st.plotly_chart(fig, use_container_width=True)
 
 
